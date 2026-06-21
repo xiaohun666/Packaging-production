@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nextvapor 包裝計算系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f1f4f1;
+  --surface:  #ffffff;
+  --border:   #dde3dd;
+  --border2:  #c8d1c8;
+
+  --text:     #1a231a;
+  --text2:    #5a6e5a;
+  --text3:    #96a896;
+
+  /* Module A — green */
+  --ga:       #16a34a;
+  --ga-light: #dcfce7;
+  --ga-mid:   #bbf7d0;
+  --ga-border:#86efac;
+  --ga-hero:  #f0fdf4;
+
+  /* Module B — blue */
+  --gb:       #2563eb;
+  --gb-light: #dbeafe;
+  --gb-mid:   #bfdbfe;
+  --gb-border:#93c5fd;
+  --gb-hero:  #eff6ff;
+
+  /* Amber for pallet */
+  --amber:    #d97706;
+  --amber-light:#fef3c7;
+  --amber-border:#fcd34d;
+
+  --red:      #dc2626;
+  --red-light:#fee2e2;
+
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --disp: 'Syne', sans-serif;
+  --r:    12px;
+  --rs:   8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--ga); display: flex; align-items: center; justify-content: center;
+}
+.brand-icon svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.brand-name { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+.brand-sub  { font-size: 10px; color: var(--text3); letter-spacing: 0.4px; font-family: var(--mono); }
+.header-pill {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.4px;
+  color: var(--text3); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px;
+}
+
+/* ── PAGE GRID ── */
+.page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 52px);
+  gap: 0;
+}
+
+/* ── MODULE ── */
+.module {
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+.module:last-child { border-right: none; }
+
+/* Colored top accent bar */
+.module-accent {
+  height: 4px;
+  flex-shrink: 0;
+}
+
+.module-head {
+  padding: 22px 26px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 52px; z-index: 10;
+}
+.mod-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.mod-title {
+  font-family: var(--disp); font-size: 19px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.3px;
+}
+
+.module-body {
+  padding: 22px 26px 40px;
+  display: flex; flex-direction: column; gap: 22px;
+  flex: 1;
+}
+
+/* ── SECTION ── */
+.sect { display: flex; flex-direction: column; gap: 10px; }
+.sect-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text3);
+  display: flex; align-items: center; gap: 8px;
+}
+.sect-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+/* ── FIELD ── */
+.fields { display: flex; flex-direction: column; gap: 8px; }
+.field-row { display: grid; gap: 8px; }
+.field-row.c2 { grid-template-columns: 1fr 1fr; }
+.field-row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field-label { font-size: 11px; font-weight: 500; color: var(--text2); padding-left: 1px; }
+
+/* ── INPUT ── */
+.finput {
+  width: 100%;
+  font-family: var(--mono); font-size: 13px; font-weight: 500;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--rs);
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -moz-appearance: textfield;
+}
+.finput::-webkit-outer-spin-button,
+.finput::-webkit-inner-spin-button { -webkit-appearance: none; }
+.finput:focus { border-color: var(--focus-color, #16a34a); box-shadow: 0 0 0 3px var(--focus-glow, rgba(22,163,74,0.12)); }
+
+/* Module A inputs */
+.mod-a .finput { --focus-color: var(--ga); --focus-glow: rgba(22,163,74,0.12); }
+/* Module B inputs */
+.mod-b .finput { --focus-color: var(--gb); --focus-glow: rgba(37,99,235,0.12); }
+
+/* Hero input */
+.hero-input {
+  font-size: 32px !important;
+  font-weight: 400 !important;
+  padding: 14px 18px !important;
+  border-radius: var(--r) !important;
+  border-width: 2px !important;
+}
+
+/* ── RESULT CARDS ── */
+
+/* Hero result */
+.res-hero {
+  border-radius: var(--r);
+  padding: 20px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  box-shadow: var(--shadow);
+}
+.rh-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; opacity: 0.65; }
+.rh-val { font-family: var(--disp); font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+.rh-unit { font-size: 15px; font-weight: 600; margin-left: 4px; opacity: 0.6; }
+.rh-side {
+  border-radius: var(--rs); padding: 12px 16px; text-align: right;
+  flex-shrink: 0; border: 1px solid transparent;
+}
+.rh-side-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.65; }
+.rh-side-val { font-family: var(--mono); font-size: 18px; font-weight: 500; margin-top: 3px; }
+
+/* Sub result grid */
+.res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.res-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--rs); padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+.rc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); margin-bottom: 5px; }
+.rc-val { font-family: var(--mono); font-size: 19px; font-weight: 500; color: var(--text); }
+.rc-hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* state variants */
+.res-card.good { background: var(--ga-light); border-color: var(--ga-border); }
+.res-card.good .rc-val { color: var(--ga); }
+.res-card.warn { background: var(--amber-light); border-color: var(--amber-border); }
+.res-card.warn .rc-val { color: var(--amber); }
+.res-card.bad  { background: var(--red-light);  border-color: #fca5a5; }
+.res-card.bad  .rc-val  { color: var(--red); }
+
+/* Error */
+.err-banner {
+  background: var(--red-light); border: 1.5px solid #fca5a5;
+  border-radius: var(--rs); padding: 11px 14px;
+  color: var(--red); font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+}
+.err-banner svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; flex-shrink: 0; }
+
+/* ── DIM RESULTS ── */
+.dim-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px; box-shadow: var(--shadow);
+}
+.dim-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dim-stripe { width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0; }
+.dim-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text3); }
+.dim-val { font-family: var(--mono); font-size: 21px; font-weight: 500; color: var(--text); letter-spacing: -0.2px; }
+.dim-formula { font-size: 11px; color: var(--text3); margin-top: 6px; font-style: italic; }
+
+.pallet-card {
+  background: var(--amber-light); border: 1.5px solid var(--amber-border);
+  border-radius: var(--r); padding: 16px 18px; box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.pc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--amber); margin-bottom: 4px; }
+.pc-val { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--amber); }
+.pc-hint { font-size: 11px; color: var(--amber); opacity: 0.65; margin-top: 5px; }
+.pc-badge {
+  background: rgba(217,119,6,0.1); border: 1px solid var(--amber-border);
+  border-radius: var(--rs); padding: 10px 16px; text-align: center; flex-shrink: 0;
+}
+.pc-badge-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--amber); opacity: 0.7; }
+.pc-badge-val { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--amber); margin-top: 3px; }
+
+/* Stack logic */
+.logic-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.logic-item {
+  background: var(--gb-light); border: 1px solid var(--gb-mid);
+  border-radius: var(--rs); padding: 11px 13px;
+}
+.logic-item-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gb); opacity: 0.7; margin-bottom: 4px; }
+.logic-item-val { font-family: var(--mono); font-size: 12px; color: var(--gb); font-weight: 500; }
+
+/* ── MODE TOGGLE ── */
+.mode-toggle {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.mode-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 12px 10px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  font-family: var(--sans);
+}
+.mode-btn:hover { border-color: var(--gb-border); background: var(--gb-hero); }
+.mode-btn.active {
+  border-color: var(--gb);
+  background: var(--gb-hero);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.mode-icon { font-size: 16px; line-height: 1; }
+.mode-text { font-size: 12px; font-weight: 600; color: var(--text); }
+.mode-sub  { font-size: 10px; color: var(--text3); }
+.mode-btn.active .mode-text { color: var(--gb); }
+.mode-hint {
+  font-size: 11px; color: var(--text3); font-style: italic;
+  padding-left: 2px; margin-top: -2px;
+}
+
+/* ── FLASH ── */
+@keyframes fNum { 0%,100%{opacity:1} 40%{opacity:0.25} }
+.flash { animation: fNum 0.22s ease; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 860px) {
+  .page { grid-template-columns: 1fr; }
+  .module { border-right: none; border-bottom: 1px solid var(--border); }
+  .module-head { position: relative; top: 0; }
+  .rh-val { font-size: 40px; }
+  .logic-grid { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width: 520px) {
+  .header { padding: 0 16px; }
+  .module-head, .module-body { padding-left: 16px; padding-right: 16px; }
+  .header-pill { display: none; }
+  .res-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Nextvapor</div>
+      <div class="brand-sub">PACKAGING SYSTEM</div>
+    </div>
+  </div>
+  <div class="header-pill">即時計算 · 雙模組</div>
+</header>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════
+       MODULE A — WEIGHT (GREEN)
+  ═══════════════════════════════ -->
+  <div class="module mod-a">
+    <div class="module-accent" style="background: linear-gradient(90deg, var(--ga), var(--ga-border))"></div>
+    <div class="module-head">
+      <div class="mod-tag" style="color:var(--ga)">Module A</div>
+      <div class="mod-title">重量與裝箱建議</div>
+    </div>
+
+    <div class="module-body">
+
+      <!-- 產品重量 -->
+      <div class="sect">
+        <div class="sect-label">產品重量</div>
+        <div class="field">
+          <div class="field-label">單個產品重量 (g)</div>
+          <input class="finput hero-input" type="number" id="unitWeight" value="15.0" step="0.1">
+        </div>
+      </div>
+
+      <!-- 重量限額 -->
+      <div class="sect">
+        <div class="sect-label">重量限額</div>
+        <div class="field">
+          <div class="field-label">整箱限重 (g)</div>
+          <input class="finput" type="number" id="limitG" value="21000" step="100">
+        </div>
+      </div>
+
+      <!-- 固定包材 -->
+      <div class="sect">
+        <div class="sect-label">固定包材重量 (g)</div>
+        <div class="fields">
+          <div class="field-row c2">
+            <div class="field">
+              <div class="field-label">外箱</div>
+              <input class="finput" type="number" id="outerBox" value="1500" step="50">
+            </div>
+            <div class="field">
+              <div class="field-label">防水袋</div>
+              <input class="finput" type="number" id="waterproofBag" value="200" step="10">
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">額外預留</div>
+            <input class="finput" type="number" id="extraBuffer" value="500" step="50">
+          </div>
+        </div>
+      </div>
+
+      <!-- 隨產品耗材 -->
+      <div class="sect">
+        <div class="sect-label">隨產品耗材（每 100 pcs）</div>
+        <div class="field-row c2">
+          <div class="field">
+            <div class="field-label">白盒 (g)</div>
+            <input class="finput" type="number" id="whiteBox" value="215" step="5">
+          </div>
+          <div class="field">
+            <div class="field-label">珍珠棉 (g)</div>
+            <input class="finput" type="number" id="foam" value="35" step="5">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RESULTS A ── -->
+      <div class="sect">
+        <div class="sect-label">計算結果</div>
+
+        <div id="weightErr" class="err-banner" style="display:none">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="weightErrMsg"></span>
+        </div>
+
+        <div id="weightOK">
+          <!-- Hero -->
+          <div class="res-hero" style="background:var(--ga-hero); border:1.5px solid var(--ga-border); margin-bottom:8px;">
+            <div>
+              <div class="rh-label" style="color:var(--ga)">建議裝箱數量</div>
+              <div>
+                <span class="rh-val" id="resCount" style="color:var(--ga)">0</span>
+                <span class="rh-unit" style="color:var(--ga)">PCS</span>
+              </div>
+            </div>
+            <div class="rh-side" style="background:rgba(22,163,74,0.08); border-color:var(--ga-border);">
+              <div class="rh-side-label" style="color:var(--ga)">預估整箱總重</div>
+              <div class="rh-side-val" style="color:var(--ga)" id="resTotal">— kg</div>
+            </div>
+          </div>
+          <!-- Sub grid -->
+          <div class="res-grid">
+            <div class="res-card" id="remainCard">
+              <div class="rc-label">距限重剩餘</div>
+              <div class="rc-val" id="resRemain">— g</div>
+            </div>
+            <div class="res-card">
+              <div class="rc-label">理論最大（非整百）</div>
+              <div class="rc-val" id="resTheory">— PCS</div>
+              <div class="rc-hint">不向下取百時的極限</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       MODULE B — DIMENSION (BLUE)
+  ═══════════════════════════════ -->
+  <div class="module mod-b">
+    <div class="module-accent" style="background: linear-gradient(90deg, var(--gb), var(--gb-border))"></div>
+    <div class="module-head">
+      <div class="mod-tag" style="color:var(--gb)">Module B</div>
+      <div class="mod-title">尺寸與卡板計算</div>
+    </div>
+
+    <div class="module-body">
+
+      <!-- 模式切換 -->
+      <div class="sect">
+        <div class="sect-label">輸入模式</div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="modeFoam" onclick="setMode('foam')">
+            <span class="mode-icon">🌿</span>
+            <span class="mode-text">白棉 → 白盒</span>
+            <span class="mode-sub">自動換算</span>
+          </button>
+          <button class="mode-btn" id="modeBox" onclick="setMode('box')">
+            <span class="mode-icon">📦</span>
+            <span class="mode-text">直接輸入白盒</span>
+            <span class="mode-sub">跳過換算</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 白棉尺寸（foam 模式） -->
+      <div class="sect" id="sectFoam">
+        <div class="sect-label">白棉原始尺寸 (mm)</div>
+        <div class="field-row c3">
+          <div class="field">
+            <div class="field-label" style="text-align:center">長 L</div>
+            <input class="finput" type="number" id="foamL" value="0" step="1" style="text-align:center">
+          </div>
+          <div class="field">
+            <div class="field-label" style="text-align:center">寬 W</div>
+            <input class="finput" type="number" id="foamW" value="0" step="1" style="text-align:center">
+          </div>
+          <div class="field">
+            <div class="field-label" style="text-align:center">高 H</div>
+            <input class="finput" type="number" id="foamH" value="0" step="1" style="text-align:center">
+          </div>
+        </div>
+        <div class="mode-hint">白盒 = 白棉 L+3 / W+3 / H+5</div>
+      </div>
+
+      <!-- 白盒尺寸（box 模式，直接輸入） -->
+      <div class="sect" id="sectBox" style="display:none">
+        <div class="sect-label">白盒尺寸 (mm)</div>
+        <div class="field-row c3">
+          <div class="field">
+            <div class="field-label" style="text-align:center">長 L</div>
+            <input class="finput" type="number" id="boxL" value="0" step="1" style="text-align:center">
+          </div>
+          <div class="field">
+            <div class="field-label" style="text-align:center">寬 W</div>
+            <input class="finput" type="number" id="boxW" value="0" step="1" style="text-align:center">
+          </div>
+          <div class="field">
+            <div class="field-label" style="text-align:center">高 H</div>
+            <input class="finput" type="number" id="boxH" value="0" step="1" style="text-align:center">
+          </div>
+        </div>
+      </div>
+
+      <!-- 堆疊 -->
+      <div class="sect">
+        <div class="sect-label">堆疊方式</div>
+        <div class="fields">
+          <div class="field-row c2">
+            <div class="field">
+              <div class="field-label">X 方向（最多）</div>
+              <input class="finput" type="number" id="nx" value="1" min="1">
+            </div>
+            <div class="field">
+              <div class="field-label">Y 方向（中間）</div>
+              <input class="finput" type="number" id="ny" value="1" min="1">
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Z 方向（高度層數）</div>
+            <input class="finput" type="number" id="nz" value="1" min="1">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RESULTS B ── -->
+      <div class="sect">
+        <div class="sect-label">尺寸計算結果</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+
+          <div class="dim-card">
+            <div class="dim-card-head">
+              <div class="dim-stripe" style="background:var(--ga)"></div>
+              <div class="dim-label">白盒單體尺寸 (mm)</div>
+            </div>
+            <div class="dim-val" id="resDimBox">— × — × —</div>
+            <div class="dim-formula" id="boxFormula">白棉 L+3 / W+3 / H+5</div>
+          </div>
+
+          <div class="dim-card">
+            <div class="dim-card-head">
+              <div class="dim-stripe" style="background:var(--gb)"></div>
+              <div class="dim-label">外箱建議尺寸 (mm)</div>
+            </div>
+            <div class="dim-val" id="resDimOuter">— × — × —</div>
+            <div class="dim-formula">長+34 / 寬+22 / 短+39（含間隙公差）</div>
+          </div>
+
+          <div class="pallet-card">
+            <div>
+              <div class="pc-label">匹配卡板底座 (mm)</div>
+              <div class="pc-val" id="resDimPallet">— × —</div>
+              <div class="pc-hint">外箱長寬各減 15mm（內縮公差）</div>
+            </div>
+            <div class="pc-badge">
+              <div class="pc-badge-label">裝箱總數</div>
+              <div class="pc-badge-val" id="resDimTotal">—</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 堆疊邏輯 -->
+      <div class="sect">
+        <div class="sect-label">堆疊邏輯</div>
+        <div class="logic-grid" id="logicGrid">
+          <div class="logic-item"><div class="logic-item-label">X 方向</div><div class="logic-item-val">—</div></div>
+          <div class="logic-item"><div class="logic-item-label">Y 方向</div><div class="logic-item-val">—</div></div>
+          <div class="logic-item"><div class="logic-item-label">Z 方向</div><div class="logic-item-val">—</div></div>
+        </div>
+      </div>
+
+      <!-- 3D 堆疊示意圖 -->
+      <div class="sect">
+        <div class="sect-label">白盒堆疊示意圖</div>
+        <div class="dim-card" style="padding:16px 18px 14px">
+          <div id="stackWrap" style="width:100%; overflow:visible;"></div>
+          <div style="display:flex; justify-content:center; gap:20px; margin-top:6px;">
+            <span style="font-size:10px; color:var(--text3); font-family:var(--mono)">X: <span id="lblNx">—</span></span>
+            <span style="font-size:10px; color:var(--text3); font-family:var(--mono)">Y: <span id="lblNy">—</span></span>
+            <span style="font-size:10px; color:var(--text3); font-family:var(--mono)">Z: <span id="lblNz">—</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 刀模線圖下載 -->
+      <div class="sect">
+        <div class="sect-label">白盒刀模線圖</div>
+        <div class="dim-card" style="padding:18px 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+            <div>
+              <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:4px;">自鎖底盒展開圖</div>
+              <div style="font-size:11px; color:var(--text3);" id="dielineInfo">請先輸入白盒尺寸</div>
+            </div>
+            <button id="dielineBtn" onclick="downloadDieline()"
+              style="display:flex; align-items:center; gap:8px; padding:10px 18px;
+                     background:var(--gb); color:#fff; border:none; border-radius:var(--rs);
+                     font-family:var(--sans); font-size:13px; font-weight:600; cursor:pointer;
+                     transition:opacity 0.15s; white-space:nowrap;"
+              onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              下載 PDF
+            </button>
+          </div>
+          <!-- SVG preview of dieline -->
+          <div id="dielinePreview" style="margin-top:14px; width:100%; overflow:hidden; border-radius:6px; background:var(--bg); padding:8px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+const IDS = ['unitWeight','limitG','outerBox','waterproofBag','extraBuffer','whiteBox','foam',
+             'foamL','foamW','foamH','boxL','boxW','boxH','nx','ny','nz'];
+
+let dimMode = 'foam';
+
+function setMode(m) {
+  dimMode = m;
+  document.getElementById('modeFoam').classList.toggle('active', m === 'foam');
+  document.getElementById('modeBox').classList.toggle('active', m === 'box');
+  document.getElementById('sectFoam').style.display = m === 'foam' ? '' : 'none';
+  document.getElementById('sectBox').style.display  = m === 'box'  ? '' : 'none';
+  document.getElementById('boxFormula').textContent =
+    m === 'foam' ? '白棉 L+3 / W+3 / H+5' : '直接輸入白盒尺寸';
+  calc();
+}
+
+function getV(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function flash(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+// ── 3D SOLID STACK — reference image style ────────
+function drawStack(nx, ny, nz) {
+  const wrap = document.getElementById('stackWrap');
+  if (!wrap) return;
+
+  document.getElementById('lblNx').textContent = nx;
+  document.getElementById('lblNy').textContent = ny;
+  document.getElementById('lblNz').textContent = nz;
+
+  const RX = Math.min(nx, 8);
+  const RY = Math.min(ny, 8);
+  const RZ = Math.min(nz, 8);
+
+  // Projection: cabinet oblique (like the reference photo)
+  // +x = pure right, +y = upper-left at 30deg, +z = pure up
+  // This gives the classic "stacked boxes" look
+  const BW = 48;   // box face width (px)
+  const BD = 22;   // box depth projection (y-axis offset)
+  const BH = 32;   // box height (px)
+  const DX = 14;   // depth x-offset per y unit
+  const DY = -10;  // depth y-offset per y unit (goes up-left)
+
+  function proj(gx, gy, gz) {
+    return {
+      x: gx * BW + gy * DX,
+      y: -gz * BH + gy * DY
+    };
+  }
+
+  // Bounding box
+  const allPts = [];
+  for (let gx = 0; gx <= RX; gx++)
+    for (let gy = 0; gy <= RY; gy++)
+      for (let gz = 0; gz <= RZ; gz++)
+        allPts.push(proj(gx, gy, gz));
+
+  const xs = allPts.map(p => p.x);
+  const ys = allPts.map(p => p.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const PAD = 6;
+  const vW = Math.ceil(maxX - minX + PAD * 2);
+  const vH = Math.ceil(maxY - minY + PAD * 2);
+  const ox = PAD - minX;
+  const oy = PAD - minY;
+
+  function pt(gx, gy, gz) {
+    const v = proj(gx, gy, gz);
+    return `${(v.x + ox).toFixed(1)},${(v.y + oy).toFixed(1)}`;
+  }
+
+  // Solid grey, 3-tone, black outline — matching reference exactly
+  const C_FRONT = '#d4d4d4';  // front face — lightest
+  const C_TOP   = '#e8e8e8';  // top face — very light
+  const C_SIDE  = '#9a9a9a';  // right/side face — darkest
+  const STROKE  = '#222222';
+  const SW = 1.0;
+  const SW_IN = 0.5;
+
+  let polys = [];
+
+  // Painter's order: y desc (back first), z asc, x asc
+  for (let y = RY - 1; y >= 0; y--) {
+    for (let z = 0; z < RZ; z++) {
+      for (let x = 0; x < RX; x++) {
+        const isFront = y === 0;
+        const isRight = x === RX - 1;
+        const isTop   = z === RZ - 1;
+
+        // Front face (facing viewer, y=0 plane)
+        if (isFront) {
+          polys.push(
+            `<polygon points="${pt(x,0,z)} ${pt(x+1,0,z)} ${pt(x+1,0,z+1)} ${pt(x,0,z+1)}"` +
+            ` fill="${C_FRONT}" stroke="${STROKE}" stroke-width="${SW}" stroke-linejoin="round"/>`
+          );
+        } else {
+          // interior front faces — draw with inner stroke only for grid lines
+          polys.push(
+            `<polygon points="${pt(x,y,z)} ${pt(x+1,y,z)} ${pt(x+1,y,z+1)} ${pt(x,y,z+1)}"` +
+            ` fill="${C_FRONT}" stroke="${STROKE}" stroke-width="${SW_IN}" stroke-linejoin="round"/>`
+          );
+        }
+
+        // Top face
+        if (isTop) {
+          polys.push(
+            `<polygon points="${pt(x,y,z+1)} ${pt(x+1,y,z+1)} ${pt(x+1,y+1,z+1)} ${pt(x,y+1,z+1)}"` +
+            ` fill="${C_TOP}" stroke="${STROKE}" stroke-width="${SW}" stroke-linejoin="round"/>`
+          );
+        } else {
+          polys.push(
+            `<polygon points="${pt(x,y,z+1)} ${pt(x+1,y,z+1)} ${pt(x+1,y+1,z+1)} ${pt(x,y+1,z+1)}"` +
+            ` fill="${C_TOP}" stroke="${STROKE}" stroke-width="${SW_IN}" stroke-linejoin="round"/>`
+          );
+        }
+
+        // Side face (x=RX-1 only)
+        if (isRight) {
+          polys.push(
+            `<polygon points="${pt(x+1,y,z)} ${pt(x+1,y+1,z)} ${pt(x+1,y+1,z+1)} ${pt(x+1,y,z+1)}"` +
+            ` fill="${C_SIDE}" stroke="${STROKE}" stroke-width="${SW}" stroke-linejoin="round"/>`
+          );
+        }
+      }
+    }
+  }
+
+  wrap.innerHTML =
+    `<svg width="100%" viewBox="0 0 ${vW} ${vH}" style="display:block; padding: 4px 0;">` +
+    polys.join('') +
+    `</svg>`;
+}
+
+// ── MAIN CALC ─────────────────────────────────────
+function calc() {
+  // MODULE A: WEIGHT
+  const unitW  = getV('unitWeight');
+  const limitG = getV('limitG');
+  const fixedG = getV('outerBox') + getV('waterproofBag') + getV('extraBuffer');
+  const padSet = getV('whiteBox') + getV('foam');
+  const errEl  = document.getElementById('weightErr');
+  const okEl   = document.getElementById('weightOK');
+
+  if (unitW <= 0) {
+    document.getElementById('weightErrMsg').textContent = '請輸入有效的產品重量（大於 0）';
+    errEl.style.display = 'flex'; okEl.style.display = 'none';
+  } else if (limitG <= fixedG) {
+    document.getElementById('weightErrMsg').textContent = `固定包材 ${fixedG}g 已超過限重 ${limitG}g`;
+    errEl.style.display = 'flex'; okEl.style.display = 'none';
+  } else {
+    errEl.style.display = 'none'; okEl.style.display = 'block';
+    const effUnit  = unitW + padSet / 100;
+    const theorMax = Math.floor((limitG - fixedG) / effUnit);
+    let rec = Math.floor(theorMax / 100) * 100;
+    if (rec === 0 && theorMax > 0) rec = theorMax;
+    const pads   = Math.ceil(rec / 100);
+    const totalW = rec * unitW + pads * padSet + fixedG;
+    const remain = limitG - totalW;
+    document.getElementById('resCount').textContent  = rec;
+    document.getElementById('resTotal').textContent  = (totalW / 1000).toFixed(3) + ' kg';
+    document.getElementById('resRemain').textContent = remain.toFixed(1) + ' g';
+    document.getElementById('resTheory').textContent = theorMax + ' PCS';
+    const rc = document.getElementById('remainCard');
+    rc.className = 'res-card' + (remain < 0 ? ' bad' : remain < 300 ? ' warn' : ' good');
+    ['resCount','resTotal','resRemain'].forEach(flash);
+  }
+
+  // MODULE B: DIMENSION
+  const nx = Math.max(1, Math.floor(getV('nx')) || 1);
+  const ny = Math.max(1, Math.floor(getV('ny')) || 1);
+  const nz = Math.max(1, Math.floor(getV('nz')) || 1);
+  let bL, bW, bH, valid;
+
+  if (dimMode === 'foam') {
+    const fL = getV('foamL'), fW = getV('foamW'), fH = getV('foamH');
+    bL = fL > 0 ? fL + 3 : 0;
+    bW = fW > 0 ? fW + 3 : 0;
+    bH = fH > 0 ? fH + 5 : 0;
+    valid = fL > 0 && fW > 0 && fH > 0;
+  } else {
+    bL = getV('boxL'); bW = getV('boxW'); bH = getV('boxH');
+    valid = bL > 0 && bW > 0 && bH > 0;
+  }
+
+  document.getElementById('resDimBox').textContent = valid ? `${bL} × ${bW} × ${bH}` : '— × — × —';
+
+  if (valid) {
+    const sorted3 = [bL, bW, bH].sort((a, b) => b - a);
+    const bLong = sorted3[0], bMid = sorted3[1], bShort = sorted3[2];
+    const stackData = [
+      { total: bLong  * nz, n: nz, dir: '高度方向 Z' },
+      { total: bShort * nx, n: nx, dir: '最多方向 X' },
+      { total: bMid   * ny, n: ny, dir: '中間方向 Y' }
+    ];
+    const sorted3s = [...stackData].sort((a, b) => b.total - a.total);
+    const outL = sorted3s[0].total + sorted3s[0].n * 2 + 34;
+    const outW = sorted3s[1].total + sorted3s[1].n * 2 + 22;
+    const outH = sorted3s[2].total + sorted3s[2].n * 2 + 39;
+    document.getElementById('resDimOuter').textContent  = `${outL.toFixed(1)} × ${outW.toFixed(1)} × ${outH.toFixed(1)}`;
+    document.getElementById('resDimPallet').textContent = `${Math.max(0,outL-15).toFixed(1)} × ${Math.max(0,outW-15).toFixed(1)}`;
+    document.getElementById('resDimTotal').textContent  = `${nx*ny*nz} PCS`;
+    document.getElementById('logicGrid').innerHTML = stackData.map(d =>
+      `<div class="logic-item"><div class="logic-item-label">${d.dir}</div><div class="logic-item-val">${d.total} mm（×${d.n}）</div></div>`
+    ).join('');
+    ['resDimBox','resDimOuter','resDimPallet'].forEach(flash);
+    updateDieline(bL, bW, bH, true);
+  } else {
+    document.getElementById('resDimOuter').textContent  = '— × — × —';
+    document.getElementById('resDimPallet').textContent = '— × —';
+    document.getElementById('resDimTotal').textContent  = '—';
+    document.getElementById('logicGrid').innerHTML = ['X（最多）','Y（中間）','Z（高度）'].map(d =>
+      `<div class="logic-item"><div class="logic-item-label">${d}</div><div class="logic-item-val">—</div></div>`
+    ).join('');
+    updateDieline(0, 0, 0, false);
+  }
+
+  // Always redraw stack with current nx/ny/nz
+  drawStack(nx, ny, nz);
+
+  // Update dieline preview
+  updateDieline(bL, bW, bH, valid);
+}
+
+// ── DIELINE (自鎖底盒展開圖) ──────────────────────
+let _dielineL = 0, _dielineW = 0, _dielineH = 0;
+
+function updateDieline(L, W, H, valid) {
+  const info = document.getElementById('dielineInfo');
+  const btn  = document.getElementById('dielineBtn');
+  const prev = document.getElementById('dielinePreview');
+  if (!valid || L <= 0 || W <= 0 || H <= 0) {
+    info.textContent = '請先輸入白盒尺寸';
+    btn.style.opacity = '0.4'; btn.disabled = true;
+    prev.innerHTML = '';
+    return;
+  }
+  _dielineL = L; _dielineW = W; _dielineH = H;
+  info.textContent = `L ${L} × W ${W} × H ${H} mm`;
+  btn.style.opacity = '1'; btn.disabled = false;
+  prev.innerHTML = buildDielineSVG(L, W, H, true);
+}
+
+function buildDielineSVG(L, W, H, preview) {
+  // All units in mm, mapped to SVG px (1mm = 1px for real; preview scales)
+  const lidH   = H * 0.40;
+  const lockH  = H * 0.45;
+  const flapH  = W * 0.45;
+  const notchW = W * 0.28;
+  const tabH   = H * 0.14;
+  const taper  = L * 0.08;
+
+  const totalW = 2 * L + 2 * W;
+  const totalH = lidH + H + lockH;
+  const PAD    = 16;
+  const x1 = W, x2 = W + L, x3 = W + L + W;
+  const yFB = lockH, yFT = lockH + H;
+
+  const stroke = '#d81414';
+  const sw = preview ? 0.8 : 0.5;
+  const dashSW = preview ? '3,2' : '2,1.5';
+
+  function pts(...coords) {
+    return coords.map(([x,y]) => `${(x+PAD).toFixed(2)},${(y+PAD).toFixed(2)}`).join(' ');
+  }
+  function l(x1,y1,x2,y2,dash='') {
+    return `<line x1="${(x1+PAD).toFixed(2)}" y1="${(y1+PAD).toFixed(2)}" x2="${(x2+PAD).toFixed(2)}" y2="${(y2+PAD).toFixed(2)}" stroke="${stroke}" stroke-width="${sw}" ${dash ? `stroke-dasharray="${dashSW}"` : ''}/>`;
+  }
+  function poly(coords, dash='') {
+    return `<polyline points="${pts(...coords)}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round" ${dash ? `stroke-dasharray="${dashSW}"` : ''}/>`;
+  }
+
+  let s = '';
+
+  // ── 主體：4個側面 ──
+  s += poly([[0,yFB],[totalW,yFB],[totalW,yFT],[0,yFT],[0,yFB]]);
+  s += l(x1,yFB, x1,yFT,'dash');
+  s += l(x2,yFB, x2,yFT,'dash');
+  s += l(x3,yFB, x3,yFT,'dash');
+  // 頂底折線
+  s += l(0,yFT, totalW,yFT,'dash');
+  s += l(0,yFB, totalW,yFB,'dash');
+
+  // ── 頂蓋：L面梯形蓋舌（col1, col3）──
+  const col1lid = [[x1,yFT],[x1+taper,yFT+lidH],[x2-taper,yFT+lidH],[x2,yFT]];
+  const col3lid = [[x3,yFT],[x3+taper,yFT+lidH],[totalW-taper,yFT+lidH],[totalW,yFT]];
+  s += poly(col1lid);
+  s += poly(col3lid);
+  // 頂蓋 W 面小翻蓋（col0, col2）
+  s += poly([[0,yFT],[0,yFT+flapH],[x1,yFT+flapH],[x1,yFT]]);
+  s += poly([[x2,yFT],[x2,yFT+flapH],[x3,yFT+flapH],[x3,yFT]]);
+
+  // ── 自鎖底：L面（col1, col3）帶鎖扣 ──
+  function lockBottomL(xl, xr) {
+    const mid = (xl+xr)/2, hw = notchW/2;
+    return poly([
+      [xl, yFB],
+      [xl, tabH],
+      [mid-hw-tabH, tabH],
+      [mid-hw, 0],
+      [mid+hw, 0],
+      [mid+hw+tabH, tabH],
+      [xr, tabH],
+      [xr, yFB]
+    ]);
+  }
+  s += lockBottomL(x1, x2);
+  s += lockBottomL(x3, totalW);
+
+  // ── 自鎖底：W面（col0, col2）斜插片 ──
+  function lockBottomW(xl, xr) {
+    const mid = (xl+xr)/2, ins = W*0.14, diag = lockH*0.52;
+    return poly([
+      [xl, yFB],
+      [xl+ins, yFB-diag],
+      [mid, tabH*1.8],
+      [xr-ins, yFB-diag],
+      [xr, yFB]
+    ]);
+  }
+  s += lockBottomW(0, x1);
+  s += lockBottomW(x2, x3);
+
+  // ── 尺寸標注 ──
+  const fs  = preview ? 5 : 4;
+  const arr = preview ? 2.5 : 2;
+  function dimW(label, xa, xb, y) {
+    const dy = -10;
+    return `
+      ${l(xa, y, xa, y+dy*1.4)}
+      ${l(xb, y, xb, y+dy*1.4)}
+      <line x1="${(xa+PAD+arr).toFixed(1)}" y1="${(y+PAD+dy).toFixed(1)}" x2="${(xb+PAD-arr).toFixed(1)}" y2="${(y+PAD+dy).toFixed(1)}" stroke="${stroke}" stroke-width="${sw}"/>
+      <text x="${((xa+xb)/2+PAD).toFixed(1)}" y="${(y+PAD+dy-2).toFixed(1)}" font-size="${fs}" font-family="Helvetica,Arial" fill="${stroke}" text-anchor="middle">${label}</text>`;
+  }
+  function dimH(label, x, ya, yb) {
+    const dx = -10;
+    return `
+      ${l(x, ya, x+dx*1.4, ya)}
+      ${l(x, yb, x+dx*1.4, yb)}
+      <line x1="${(x+PAD+dx).toFixed(1)}" y1="${(ya+PAD+arr).toFixed(1)}" x2="${(x+PAD+dx).toFixed(1)}" y2="${(yb+PAD-arr).toFixed(1)}" stroke="${stroke}" stroke-width="${sw}"/>
+      <text x="${(x+PAD+dx-3).toFixed(1)}" y="${((ya+yb)/2+PAD).toFixed(1)}" font-size="${fs}" font-family="Helvetica,Arial" fill="${stroke}" text-anchor="middle" transform="rotate(-90,${(x+PAD+dx-3).toFixed(1)},${((ya+yb)/2+PAD).toFixed(1)})">${label}</text>`;
+  }
+
+  s += dimW(`${L.toFixed(1)}`, x1, x2, 0);
+  s += dimW(`${W.toFixed(1)}`, x2, x3, 0);
+  s += dimH(`${H.toFixed(1)}`, 0, yFB, yFT);
+
+  const vW = totalW + PAD * 2;
+  const vH = totalH + PAD * 2;
+
+  if (preview) {
+    return `<svg width="100%" viewBox="0 0 ${vW.toFixed(1)} ${vH.toFixed(1)}" style="display:block; background:white;">${s}</svg>`;
+  } else {
+    return { svg: s, vW, vH };
+  }
+}
+
+function downloadDieline() {
+  if (!_dielineL) return;
+  const L = _dielineL, W = _dielineW, H = _dielineH;
+  const { svg, vW, vH } = buildDielineSVG(L, W, H, false);
+
+  // Build full SVG with mm viewBox → print at 1mm = 1px, browsers honor this
+  const fullSVG = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="${vW.toFixed(1)}mm" height="${vH.toFixed(1)}mm"
+     viewBox="0 0 ${vW.toFixed(1)} ${vH.toFixed(1)}">
+  <title>Auto-Lock Bottom Box  L=${L} x W=${W} x H=${H} mm</title>
+  <desc>Nextvapor 自鎖底盒展開圖</desc>
+  ${svg}
+</svg>`;
+
+  // SVG → Blob → download
+  const blob = new Blob([fullSVG], { type: 'image/svg+xml' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `dieline_L${L}_W${W}_H${H}.svg`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+IDS.forEach(id => document.getElementById(id).addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
